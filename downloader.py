@@ -20,7 +20,7 @@ if __name__ == "__main__":
     numOfComics = data["num"]
     for comic in range(numOfComics, 0, -1):
         percentage = ((numOfComics - comic) / numOfComics) * 100
-        print("Progress: {}%".format(round(percentage, 2)), end = "\r")
+        print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
         site = "http://xkcd.com/{}/info.0.json".format(comic)
         data = requests.get(site).json()
         months = {1: "January", 2: "February", 3: "March", 4: "April",
