@@ -18,8 +18,8 @@ one. To facilitate easier reading, comics are stored in year->month subdirectori
 # Usage
 
 1. Run the script:
-    - Windows: `python bot.py`
-    - Other: `python3 bot.py`
+    - Windows: `python downloader.py`
+    - Other: `python3 downloader.py`
     
 # Contributing
 
