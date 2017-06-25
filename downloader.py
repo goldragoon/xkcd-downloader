@@ -13,8 +13,7 @@ if __name__ == "__main__":
         "Enter the path to save the comics to (if you don't enter a path, "
         + "they will be saved to a directory named \"comics\" in the "
         + "directory of this program):")
-    print("\nPlease note that the 404th xkcd comic doesn't exist as the "
-          + "number \"404\" is reserved for usage of servers.\n")
+    print("\nPlease note that comics 404 and 1608 don't exist.\n")
     if not directory:
         directory = "comics"
     if not os.path.isdir(directory):
@@ -28,7 +27,7 @@ if __name__ == "__main__":
     f = json.loads(open(dataFile).read())
     start = f["last"] + 1
     for comic in range(start, numOfComics + 1):
-        if comic == 404:
+        if comic == 404 or comic == 1608:
             continue
         percentage = ((comic - start) / (numOfComics - start)) * 100
         print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
