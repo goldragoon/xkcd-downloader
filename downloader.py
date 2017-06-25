@@ -13,13 +13,20 @@ if __name__ == "__main__":
         "Enter the path to save the comics to (if you don't enter a path, "
         + "they will be saved to a directory named \"comics\" in the "
         + "directory of this program):")
-    directory = directory if directory else "comics"
+    if not directory:
+        directory = "comics"
     if not os.path.isdir(directory):
         os.makedirs(directory)
+    dataFile = "{}/DO_NOT_DELETE.json".format(directory)
+    if not os.path.isfile(dataFile):
+        with open(dataFile, "w") as f:
+            json.dump({"last": 0}, f, indent = 4)
     data = requests.get("http://xkcd.com/info.0.json").json()
     numOfComics = data["num"]
-    for comic in range(numOfComics, 0, -1):
-        percentage = ((numOfComics - comic) / numOfComics) * 100
+    f = json.loads(open(dataFile).read())
+    start = f["last"] + 1
+    for comic in range(start, numOfComics + 1):
+        percentage = ((comic - start) / (numOfComics - start)) * 100
         print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
         site = "http://xkcd.com/{}/info.0.json".format(comic)
         data = requests.get(site).json()
@@ -31,5 +38,7 @@ if __name__ == "__main__":
         if not os.path.isdir(newDir):
             os.makedirs(newDir)
         title = re.sub(r"/|\\|\:|\*|\?|\"|<|>|\|", "", data["safe_title"])
-        name = "{}/{}.png".format(newDir, title)
+        name = "{}/{}-{}.png".format(newDir, comic, title)
         urllib.request.urlretrieve(data["img"], name)
+        with open(dataFile, "w") as f:
+            json.dump({"last": comic}, f, indent = 4)

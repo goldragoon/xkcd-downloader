@@ -1,7 +1,6 @@
 # xkcd Downloader
 
-Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This software downloads each xkcd comic starting from the latest
-one. To facilitate easier reading, comics are stored in year->month subdirectories.
+Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This software downloads each comic from xkcd skipping those already downloaded without the need for SQL, complex command line arguments etc. To facilitate easier reading, comics are stored in year->month subdirectories.
 
 # Installation
 
@@ -20,7 +19,7 @@ one. To facilitate easier reading, comics are stored in year->month subdirectori
 1. Run the script:
     - Windows: `python downloader.py`
     - Other: `python3 downloader.py`
-    
+
 # Contributing
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
