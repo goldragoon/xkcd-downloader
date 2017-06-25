@@ -13,7 +13,8 @@ if __name__ == "__main__":
         "Enter the path to save the comics to (if you don't enter a path, "
         + "they will be saved to a directory named \"comics\" in the "
         + "directory of this program):")
-    print("\nPlease note that comics 404 and 1608 don't exist.\n")
+    print("\nPlease note that certain comics have been skipped as they either "
+          + "don't exist or don't have a visual.\n")
     if not directory:
         directory = "comics"
     if not os.path.isdir(directory):
@@ -27,12 +28,16 @@ if __name__ == "__main__":
     f = json.loads(open(dataFile).read())
     start = f["last"] + 1
     for comic in range(start, numOfComics + 1):
-        if comic == 404 or comic == 1608:
-            continue
         percentage = ((comic - start) / (numOfComics - start)) * 100
         print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
         site = "http://xkcd.com/{}/info.0.json".format(comic)
-        data = requests.get(site).json()
+        data = requests.get(site)
+        if data.status_code != 200:
+            continue
+        data = data.json()
+        # Check if there is an image for the comic.
+        if len(data["img"]) <= len("https://imgs.xkcd.com/comics/"):
+            continue
         months = {1: "January", 2: "February", 3: "March", 4: "April",
                   5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
                   10: "October", 11: "November", 12: "December"}
