@@ -35,8 +35,7 @@ if __name__ == "__main__":
         if data.status_code != 200:
             continue
         data = data.json()
-        # Check if there is an image for the comic.
-        if len(data["img"]) <= len("https://imgs.xkcd.com/comics/"):
+        if not re.search(r".png$", data["img"]):
             continue
         months = {1: "January", 2: "February", 3: "March", 4: "April",
                   5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
