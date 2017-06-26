@@ -28,7 +28,10 @@ if __name__ == "__main__":
     f = json.loads(open(dataFile).read())
     start = f["last"] + 1
     for comic in range(start, numOfComics + 1):
-        percentage = ((comic - start) / (numOfComics - start)) * 100
+        if numOfComics - start == 0:
+            percentage = 100
+        else:
+            percentage = ((comic - start) / (numOfComics - start)) * 100
         print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
         site = "http://xkcd.com/{}/info.0.json".format(comic)
         data = requests.get(site)
@@ -49,3 +52,4 @@ if __name__ == "__main__":
         urllib.request.urlretrieve(data["img"], name)
         with open(dataFile, "w") as f:
             json.dump({"last": comic}, f, indent = 4)
+    print("\nCompleted")
