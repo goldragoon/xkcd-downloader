@@ -14,7 +14,7 @@ Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This sof
 1. Change the directory: `cd xkcd-downloader`
 1. Install the dependencies: `pip3 install -r requirements.txt`
 
-# Usage
+# Usage (requires [Installation](#installation))
 
 1. Change the directory: `cd src`
 1. Run:
