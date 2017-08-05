@@ -1,5 +1,7 @@
 # xkcd Downloader
 
+[![Dependency Status](https://gemnasium.com/badges/github.com/neelkamath/xkcd-downloader.svg)](https://gemnasium.com/github.com/neelkamath/xkcd-downloader)
+
 Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This software downloads each comic from xkcd skipping those already downloaded without the need for SQL, complex command line arguments etc. To facilitate easier reading, comics are stored in `year/month` subdirectories. A few comic numbers might be skipped because they either don't exist or don't contain a visual.
 
 # Installation
