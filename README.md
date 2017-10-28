@@ -13,9 +13,11 @@ Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This sof
 
 ## Building
 
-1. Clone the repository: `git clone https://github.com/neelkamath/xkcd-downloader`
-1. Change the directory: `cd xkcd-downloader`
-1. Install the dependencies: `pip3 install -r requirements.txt`
+```shell
+git clone https://github.com/neelkamath/xkcd-downloader
+cd xkcd-downloader
+pip3 install -r requirements.txt
+```
 
 # Usage
 
@@ -23,11 +25,15 @@ Ever been bored and wanted offline access to [xkcd](https://xkcd.com/)? This sof
 1. Run:
     - Windows: `python downloader.py`
     - Other: `python3 downloader.py`
-1. If this is the first time running it, it will immediately terminate after generating the file `config.json`. If you want to change the directory it downloads comics to (by default, it downloads to `comics` located in the scripts' directory), you may do so in `config.json`. Run the script again if necessary.
-1. It's also possible to have the script run each time your computer powers on so that new comics are automatically downloaded. The steps to do so are listed below but only work on Windows as other distros have varying steps to achieve this:
-    1. Go to the directory `C:\Users\<YOUR_USERNAME>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, where `<YOUR_USERNAME>` is your username.
-    1. Create a shortcut pointing to the location of the script.
-    1. Make sure python scripts open with `Python` (so that when you open the file from File Explorer it runs the script and doesn't open the editor). You can do this by right-clicking the script, clicking `Opens with:` in the `General` tab and choosing `Python`.
+1. Optionally have the script automatically run on startup so new comics automatically download.
+    - Linux
+        1. Make the script executable: `chmod +x downloader.sh`
+        1. Create a cron job: `crontab -e`
+        1. Append the following line to the end of the file: `@reboot <PATH>`, where `<PATH>` is the path to `downloader.py`.
+    - Windows
+        1. Go to the directory `C:\Users\<YOUR_USERNAME>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, where `<YOUR_USERNAME>` is your username.
+        1. Create a shortcut pointing to the location of the script.
+        1. Make sure python scripts open with `Python` (so that when you open the file from File Explorer it runs the script and doesn't open the editor). You can do this by right-clicking the script, clicking `Opens with:` in the `General` tab and choosing `Python`.
 
 # Contributing
 

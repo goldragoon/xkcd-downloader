@@ -5,37 +5,32 @@ import os
 import os.path
 import re
 import requests
-import sys
 import urllib.request
 
 if __name__ == "__main__":
     config = "config.json"
     if not os.path.isfile(config):
         with open(config, "w") as f:
-            data = {"directory": "{}/comics".format(os.getcwd())}
+            dir_ = os.getcwd()
+            inputted = input("(This can be changed later in "
+                             + "{}/{}) Enter the path to ".format(dir_, config)
+                             + "download to (default: {}): ".format(dir_))
+            # <"last"> corresponds to the last comic downloaded.
+            data = {"directory": inputted if inputted else dir_, "last": 0}
             json.dump(data, f, indent = 4)
-            sys.exit()
-    data = json.loads(open(config).read())
-    directory = data["directory"]
+    configFile = json.loads(open(config).read())
+    directory = configFile["directory"]
     if not os.path.isdir(directory):
         os.makedirs(directory)
-    dataFile = "{}/DO_NOT_DELETE.json".format(directory)
-    # <"last"> in the JSON file corresponds to the last comic downloaded.
-    if not os.path.isfile(dataFile):
-        with open(dataFile, "w") as f:
-            json.dump({"last": 0}, f, indent = 4)
     # http://xkcd.com/info.0.json is the link to the latest comic.
     data = requests.get("http://xkcd.com/info.0.json").json()
     numOfComics = data["num"]
-    f = json.loads(open(dataFile).read())
-    start = f["last"] + 1
+    start = configFile["last"] + 1
     for comic in range(start, numOfComics + 1):
         if numOfComics - start == 0:
             percentage = 100
         else:
             percentage = ((comic - start) / (numOfComics - start)) * 100
-        # An extra space is kept after the percentage as <end = "\r"> doesn't
-        # rewrite the entire line so 34.5% becomes 34.5<previous second digit>.
         print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
         site = "http://xkcd.com/{}/info.0.json".format(comic)
         data = requests.get(site)
@@ -56,5 +51,7 @@ if __name__ == "__main__":
         ext = data["img"][len(data["img"]) - 4:]
         name = "{}/{}-{}{}".format(newDir, comic, title, ext)
         urllib.request.urlretrieve(data["img"], name)
-        with open(dataFile, "w") as f:
-            json.dump({"last": comic}, f, indent = 4)
+        data = json.loads(open(config).read())
+        data["last"] = comic
+        with open(config, "w") as f:
+            json.dump(data, f, indent = 4)
