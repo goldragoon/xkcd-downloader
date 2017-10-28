@@ -25,15 +25,6 @@ pip3 install -r requirements.txt
 1. Run:
     - Windows: `python downloader.py`
     - Other: `python3 downloader.py`
-1. Optionally have the script automatically run on startup so new comics automatically download.
-    - Linux
-        1. Make the script executable: `chmod +x downloader.sh`
-        1. Create a cron job: `crontab -e`
-        1. Append the following line to the end of the file: `@reboot <PATH>`, where `<PATH>` is the path to `downloader.py`.
-    - Windows
-        1. Go to the directory `C:\Users\<YOUR_USERNAME>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, where `<YOUR_USERNAME>` is your username.
-        1. Create a shortcut pointing to the location of the script.
-        1. Make sure python scripts open with `Python` (so that when you open the file from File Explorer it runs the script and doesn't open the editor). You can do this by right-clicking the script, clicking `Opens with:` in the `General` tab and choosing `Python`.
 
 # Contributing
 
