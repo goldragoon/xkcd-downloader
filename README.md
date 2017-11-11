@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
     - Windows: `python downloader.py`
     - Other: `python3 downloader.py`
     
-If using [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en), you can specify the path to be `./../../storage/pictures/xkcd` so that it shows up in Google Photos.
+If you're using [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en), you can have the comics show up in Google Photos on your device by running `termux-setup-storage` and specifying the path to be `./../../storage/pictures/xkcd`.
 
 You can optionally have the script run each time your computer boots using the following steps:
 - Windows:
