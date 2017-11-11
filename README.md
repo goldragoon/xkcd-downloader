@@ -28,10 +28,16 @@ pip3 install -r requirements.txt
     
 If using [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en), you can specify the path to be `./../../storage/pictures/xkcd` so that it shows up in Google Photos.
 
-You can optionally have the script run each time your computer boots using the following steps (Windows):
-1. Go to the directory `C:\Users\<YOUR_USERNAME>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, where `<YOUR_USERNAME>` is your username.
-1. Create a shortcut pointing to the location of the script.
-1. Make sure python scripts open with `Python` (so that when you open the file from Windows Explorer it runs the script and doesn't open the editor). You can do this by right-clicking the script, clicking `Opens with:` in the `General` tab and choosing `Python`.
+You can optionally have the script run each time your computer boots using the following steps:
+- Windows:
+    1. Go to the directory `C:\Users\<YOUR_USERNAME>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup`, where `<YOUR_USERNAME>` is your username.
+    1. Create a shortcut pointing to the location of the script.
+    1. Make sure python scripts open with `Python` (so that when you open the file from Windows Explorer it runs the script and doesn't open the editor). You can do this by right-clicking the script, clicking `Opens with:` in the `General` tab and choosing `Python`.
+- Other:
+    1. Make the script executable: `chmod +x downloader.py`
+    1. Schedule it:
+        1. `crontab -e`
+        1. At the end of the file, add: `@reboot <PATH>`, where `<PATH>` is the path to the script
 
 # Contributing
 
