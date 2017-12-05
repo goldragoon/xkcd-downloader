@@ -1,6 +1,6 @@
 # xkcd Downloader
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c4934e37fee44c27a3e8848974c907b7)](https://www.codacy.com/app/neelkamath/xkcd-downloader?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=neelkamath/xkcd-downloader&amp;utm_campaign=Badge_Grade)
+[![BCH compliance](https://bettercodehub.com/edge/badge/neelkamath/xkcd-downloader?branch=master)](https://bettercodehub.com/)
 [![Known Vulnerabilities](https://snyk.io/test/github/neelkamath/xkcd-downloader/badge.svg)](https://snyk.io/test/github/neelkamath/xkcd-downloader)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
@@ -26,7 +26,7 @@ pip3 install -r requirements.txt
 1. Run:
     - Windows: `python downloader.py`
     - Other: `python3 downloader.py`
-    
+
 If you're using [Termux](https://play.google.com/store/apps/details?id=com.termux&hl=en), you can have the comics show up in Google Photos on your device by running `termux-setup-storage` and specifying the path to be `./../../storage/pictures/xkcd`.
 
 You can optionally have the script run each time your computer boots using the following steps:
