@@ -1,6 +1,5 @@
 # xkcd Downloader
 
-[![BCH compliance](https://bettercodehub.com/edge/badge/neelkamath/xkcd-downloader?branch=master)](https://bettercodehub.com/)
 [![Known Vulnerabilities](https://snyk.io/test/github/neelkamath/xkcd-downloader/badge.svg)](https://snyk.io/test/github/neelkamath/xkcd-downloader)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](LICENSE)
 
