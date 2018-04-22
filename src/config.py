@@ -25,6 +25,10 @@ class Config:
 
         self.data = json.loads(open(self._name).read())  # Load old config file
 
+    def commit(self):
+        with open(self._name, "w") as _file:
+            json.dump(self._data, _file, indent=4)
+
     @property
     def data(self):
         return self._data
@@ -52,5 +56,5 @@ class Config:
     def get_succeeded_list(self, end, start=0):
         return [comic for comic in range(end) if self.succeeded & (0b1 << comic)]
         
-    def set_succeeded_list(self, succeeded_list):
-        pass
+    def set_succeeded(self, succeeded):
+        self.succeeded = self.succeeded | (0b1 << succeeded)

@@ -56,6 +56,11 @@ def download_comic(job, config, mutex):
         ext = data["img"][len(data["img"]) - 4:]
         name = "{}/{}-{}{}".format(newDir, comic, title, ext)
         urllib.request.urlretrieve(data["img"], name)
+        
+        mutex.acquire()
+        config.set_succeeded(comic)
+        config.commit()
+        mutex.release()
 
 
 def chunks(l, n):
@@ -69,8 +74,6 @@ if __name__ == "__main__":
     num_cores = multiprocessing.cpu_count()
 
     config = Config(CONFIG_NAME)
-    print(config.data)
-
     if not os.path.isdir(config.directory):
         os.makedirs(config.directory)
    
