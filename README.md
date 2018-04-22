@@ -39,7 +39,6 @@ You can optionally have the script run each time your computer boots using the f
 # Contributing
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
-- [Contributing](CONTRIBUTING.md)
 
 # License
 
