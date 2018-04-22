@@ -8,75 +8,87 @@ import requests
 import urllib.request
 import multiprocessing
 import threading
-from threading import Thread, Lock 
+from config import Config
+from threading import Thread, Lock
+import sys
+
+CONFIG_NAME = "config.json"
+URL = "http://xkcd.com/info.0.json"  # Link to the latest xkcd comic.
+NUM_XKCD_COMIC = "num"
+
+num_downloadable = 0  # Number of comics to be downloaded at this session
+num_downloaded = 0  # Number of comics that currently downloaded at this session
+
+
+def download_comic(job, config, mutex):
+    
+    global num_downloadable
+    global num_downloaded
+
+    for comic in job:
+        mutex.acquire()
+        # To print progress variable across all thread.
+        if num_downloadable - num_downloaded == 0:
+            percentage = 100
+        else:
+            num_downloaded = num_downloaded + 1
+            percentage = (num_downloaded / num_downloadable) * 100
+        print("Progress: {}% ".format(round(percentage, 2)),end = "\r")
+        mutex.release()
+
+        site = "http://xkcd.com/{}/info.0.json".format(comic)
+        data = requests.get(site)
+        if data.status_code != 200:
+            continue
+        data = data.json()
+        if not re.search(r".jpg|.png$", data["img"]):
+            continue
+        months = {1: "January", 2: "February", 3: "March", 4: "April",
+                  5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
+                  10: "October", 11: "November", 12: "December"}
+        m = months[int(data["month"])]
+        m = "{}-{}".format(data["month"], m)
+        newDir = "{}/{}/{}".format(config.directory, data["year"], m)
+        if not os.path.isdir(newDir):
+            os.makedirs(newDir)
+
+        title = re.sub(r"/|\\|\:|\*|\?|\"|<|>|\|", "", data["safe_title"])
+        ext = data["img"][len(data["img"]) - 4:]
+        name = "{}/{}-{}{}".format(newDir, comic, title, ext)
+        urllib.request.urlretrieve(data["img"], name)
+
+
+def chunks(l, n):
+    # Break list l as n sized lists. 
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield l[i:i+n]
+
 
 if __name__ == "__main__":
+    num_cores = multiprocessing.cpu_count()
 
-    num_cores = multiprocessing.cpu_count()   
-    config = "config.json"
-    if not os.path.isfile(config):
-        with open(config, "w") as f:
-            dir_ = os.getcwd()
-            inputted = input("(This can be changed later in "
-                             + "{}/{}) Enter the path to ".format(dir_, config)
-                             + "download to (default: {}): ".format(dir_))
-            # <"last"> corresponds to the last comic downloaded.
-            data = {"directory": inputted if inputted else dir_, "last": 0}
-            json.dump(data, f, indent = 4)
-    configFile = json.loads(open(config).read())
-    directory = configFile["directory"]
-    if not os.path.isdir(directory):
-        os.makedirs(directory)
-    # http://xkcd.com/info.0.json is the link to the latest comic.
-    data = requests.get("http://xkcd.com/info.0.json").json()
-    numOfComics = data["num"]
-    global_start = configFile["last"] + 1
-    num_downloaded = global_start
+    config = Config(CONFIG_NAME)
+    print(config.data)
 
-    def download_comic(worker_start, worker_end, mutex):
-        global num_downloaded
-        for comic in range(worker_start, worker_end):
+    if not os.path.isdir(config.directory):
+        os.makedirs(config.directory)
+   
+    data = requests.get(URL).json()
+    num_xkcd_comic = data[NUM_XKCD_COMIC]
 
-            mutex.acquire()
-            if numOfComics - global_start == 0:
-                percentage = 100
-            else:
-                num_downloaded = num_downloaded + 1
-                percentage = ((num_downloaded - global_start) / (numOfComics - global_start)) * 100
-            print("Progress: {}% ".format(round(percentage, 2)), end = "\r")
-            mutex.release()
+    mutex_num_download = Lock()
+    jobs = list(set(range(num_xkcd_comic)) - set(config.get_succeeded_list(num_xkcd_comic)))
+    num_downloadable = len(jobs)
 
-            site = "http://xkcd.com/{}/info.0.json".format(comic)
-            data = requests.get(site)
-            if data.status_code != 200:
-                continue
-            data = data.json()
-            if not re.search(r".jpg|.png$", data["img"]):
-                continue
-            months = {1: "January", 2: "February", 3: "March", 4: "April",
-                      5: "May", 6: "June", 7: "July", 8: "August", 9: "September",
-                      10: "October", 11: "November", 12: "December"}
-            m = months[int(data["month"])]
-            m = "{}-{}".format(data["month"], m)
-            newDir = "{}/{}/{}".format(directory, data["year"], m)
-            if not os.path.isdir(newDir):
-                os.makedirs(newDir)
+    if num_downloadable == 0:
+        print("All Clear :>")
+        sys.exit(1)
 
-
-            title = re.sub(r"/|\\|\:|\*|\?|\"|<|>|\|", "", data["safe_title"])
-            ext = data["img"][len(data["img"]) - 4:]
-            name = "{}/{}-{}{}".format(newDir, comic, title, ext)
-            urllib.request.urlretrieve(data["img"], name)        
-
-    percentage_mutex = Lock()
-    chunk = (numOfComics - global_start) // num_cores 
-    for i in range(num_cores):
-        t = Thread(target=download_comic, args=(global_start + chunk * i, global_start + chunk * (i + 1), percentage_mutex))
+    for job in chunks(jobs, num_downloadable // num_cores):
+        t = Thread(target=download_comic, args=(job, config, mutex_num_download))
         t.start()
 
     for thread in threading.enumerate():
-        if t is not threading.currentThread():
-            t.join()
-
-
-    
+        if thread is not threading.currentThread():
+            thread.join()
