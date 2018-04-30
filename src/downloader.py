@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-import json
 import os
 import os.path
 import re
 import requests
 import urllib.request
+import click
 import multiprocessing
 import threading
 from config import Config
 from threading import Thread, Lock
 import sys
 
-CONFIG_NAME = "config.json"
+CONFIG_NAME = ".xkcd-config.json"
 URL = "http://xkcd.com/info.0.json"  # Link to the latest xkcd comic.
 NUM_XKCD_COMIC = "num"
 
@@ -21,19 +21,19 @@ num_downloaded = 0  # Number of comics that currently downloaded at this session
 
 
 def download_comic(job, config, mutex):
-    
     global num_downloadable
     global num_downloaded
 
     for comic in job:
         mutex.acquire()
-        # To print progress variable across all thread.
+        # To print progress variable across all thread. 
         if num_downloadable - num_downloaded == 0:
             percentage = 100
         else:
             num_downloaded = num_downloaded + 1
             percentage = (num_downloaded / num_downloadable) * 100
-        print("Progress: {}% ".format(round(percentage, 2)),end = "\r")
+        
+        print("Progress: {}% ".format(round(percentage, 2)), end="\r")
         mutex.release()
 
         site = "http://xkcd.com/{}/info.0.json".format(comic)
@@ -56,7 +56,7 @@ def download_comic(job, config, mutex):
         ext = data["img"][len(data["img"]) - 4:]
         name = "{}/{}-{}{}".format(newDir, comic, title, ext)
         urllib.request.urlretrieve(data["img"], name)
-        
+
         mutex.acquire()
         config.set_succeeded(comic)
         config.commit()
@@ -64,19 +64,25 @@ def download_comic(job, config, mutex):
 
 
 def chunks(l, n):
-    # Break list l as n sized lists. 
+    # Break list l as n sized lists.
     for i in range(0, len(l), n):
         # Create an index range for l of n items:
-        yield l[i:i+n]
+        yield l[i:i + n]
 
 
-if __name__ == "__main__":
+@click.command()
+@click.option('-d', '--directory', default='./')
+@click.option('-v', '--verbose', is_flag=True)
+def main(directory, verbose):
+    global num_downloadable
+
     num_cores = multiprocessing.cpu_count()
-
     config = Config(CONFIG_NAME)
+    config.directory = directory
+    config.commit()
+
     if not os.path.isdir(config.directory):
         os.makedirs(config.directory)
-   
     data = requests.get(URL).json()
     num_xkcd_comic = data[NUM_XKCD_COMIC]
 
@@ -88,6 +94,9 @@ if __name__ == "__main__":
         print("All Clear :>")
         sys.exit(1)
 
+    if verbose:
+        print("{} comics to be downloaded".format(num_downloadable))
+
     for job in chunks(jobs, num_downloadable // num_cores):
         t = Thread(target=download_comic, args=(job, config, mutex_num_download))
         t.start()
@@ -95,3 +104,7 @@ if __name__ == "__main__":
     for thread in threading.enumerate():
         if thread is not threading.currentThread():
             thread.join()
+
+
+if __name__ == "__main__":
+    main()
